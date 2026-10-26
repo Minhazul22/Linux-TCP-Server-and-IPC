@@ -1,9 +1,25 @@
-flowchart TD
-    A[Remote Client] <--> |TCP session / Telnet in lab| B[Embedded Linux TCP Server]
-    B <--> C[Wireshark Packet Observation]
-    D[Process A] <--> |Signals / message queues| E[Process B]
-    F[Shared File] <--> G[Locking Strategy]
-    D --> G
-    E --> G
-    H[Scheduling Experiments] --> D
-    H --> E
+flowchart TB
+    subgraph NET["Networking: embedded Linux"]
+        CLIENT[Remote client]
+        SERVER[Embedded Linux TCP server]
+        CLIENT <-->|TCP session / Telnet lab test| SERVER
+        CLIENT -. captured packets .-> TRACE[Wireshark observation]
+        SERVER -. connection traffic .-> TRACE
+    end
+
+    subgraph IPC["Interprocess communication"]
+        PROC_A[Process A]
+        PROC_B[Process B]
+        PROC_A <-->|Signals / message queues| PROC_B
+    end
+
+    subgraph SYNC["Scheduling and shared-file synchronization"]
+        SCHED[Process scheduling experiments]
+        SHARED[Shared file]
+        LOCK[Lock file or fcntl lock]
+        PROC_A --> SHARED
+        PROC_B --> SHARED
+        LOCK -. coordinates access .-> SHARED
+        SCHED -. affects execution timing .-> PROC_A
+        SCHED -. affects execution timing .-> PROC_B
+    end
