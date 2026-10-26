@@ -1,0 +1,9 @@
+flowchart TD
+    A[Remote Client] <--> |TCP session / Telnet in lab| B[Embedded Linux TCP Server]
+    B <--> C[Wireshark Packet Observation]
+    D[Process A] <--> |Signals / message queues| E[Process B]
+    F[Shared File] <--> G[Locking Strategy]
+    D --> G
+    E --> G
+    H[Scheduling Experiments] --> D
+    H --> E
